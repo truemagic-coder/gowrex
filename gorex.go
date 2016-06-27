@@ -74,10 +74,7 @@ func (r Request) Do() (*Response, error) {
 	client := &http.Client{}
 	client.Timeout = r.Timeout
 	res, err := client.Do(r.Req)
-	if err != nil {
-		return nil, err
-	}
-	return &Response{res, r.URI}, nil
+	return &Response{res, r.URI}, err
 }
 
 // JSONDecode - decode JSON to interface
