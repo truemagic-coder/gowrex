@@ -2,12 +2,14 @@ package gorex
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"mime/multipart"
 	"net/http"
+	"time"
 )
 
-func reqFormFile(uri string, params map[string]string, paramName, fileName string, fileBuffer *bytes.Buffer, method string) (*http.Request, error) {
+func reqFormFile(r Request, params map[string]string, paramName, fileName string, fileBuffer *bytes.Buffer) (*http.Request, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile(paramName, fileName)
@@ -25,38 +27,63 @@ func reqFormFile(uri string, params map[string]string, paramName, fileName strin
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest(method, uri, body)
+	req, err := http.NewRequest(r.Method, r.URI, body)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
+	r.Req = req
 	return req, err
 }
 
-func reqJSON(uri string, body *bytes.Buffer, method string) (*http.Request, error) {
-	req, err := http.NewRequest(method, uri, body)
+func reqJSON(r Request, body interface{}) (*http.Request, error) {
+	marshalled, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	jsonBuffer := bytes.NewBuffer(marshalled)
+	req, err := http.NewRequest(r.Method, r.URI, jsonBuffer)
 	req.Header.Add("Content-Type", "application/json")
+	r.Req = req
 	return req, err
 }
 
-// PostFormFile - POST a multipart upload with file buffer with optional params
-func PostFormFile(uri string, params map[string]string, paramName, fileName string, fileBuffer *bytes.Buffer) (*http.Request, error) {
-	return reqFormFile(uri, params, paramName, fileName, fileBuffer, "POST")
+// Request - the request object
+type Request struct {
+	URI     string
+	Method  string
+	Req     *http.Request
+	Timeout time.Duration
 }
 
-// PutFormFile - PUT a multipart upload with file buffer with optional params
-func PutFormFile(uri string, params map[string]string, paramName, fileName string, fileBuffer *bytes.Buffer) (*http.Request, error) {
-	return reqFormFile(uri, params, paramName, fileName, fileBuffer, "PUT")
+// Response - the response object
+type Response struct {
+	Res *http.Response
+	URI string
 }
 
-// PostJSON - POST JSON to an endpoint
-func PostJSON(uri string, body *bytes.Buffer) (*http.Request, error) {
-	return reqJSON(uri, body, "POST")
+// FormFile - a request for a multipart upload with file buffer with optional params
+func (r Request) FormFile(params map[string]string, paramName, fileName string, fileBuffer *bytes.Buffer) (*http.Request, error) {
+	return reqFormFile(r, params, paramName, fileName, fileBuffer)
 }
 
-// PutJSON - PUT JSON to an endpoint
-func PutJSON(uri string, body *bytes.Buffer) (*http.Request, error) {
-	return reqJSON(uri, body, "PUT")
+// JSON - a request to a JSON endpoint
+func (r Request) JSON(body interface{}, method string) (*http.Request, error) {
+	return reqJSON(r, body)
 }
 
-// GetJSON - GET a JSON from an endpoint
-func GetJSON(uri string) (*http.Request, error) {
-	return reqJSON(uri, nil, "GET")
+// Do - process the request with timeout
+func (r Request) Do() (*Response, error) {
+	client := &http.Client{}
+	client.Timeout = r.Timeout
+	res, err := client.Do(r.Req)
+	if err != nil {
+		return nil, err
+	}
+	return &Response{res, r.URI}, nil
+}
+
+// JSONDecode - decode JSON to interface
+func (r Response) JSONDecode(decoder interface{}) *interface{} {
+	defer r.Res.Body.Close()
+	resp := &decoder
+	json.NewDecoder(r.Res.Body).Decode(resp)
+	return resp
 }
