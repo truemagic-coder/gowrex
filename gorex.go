@@ -1,4 +1,4 @@
-package gorequest
+package gorex
 
 import (
 	"bytes"
