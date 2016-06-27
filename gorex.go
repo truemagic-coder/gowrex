@@ -65,7 +65,7 @@ func (r Request) FormFile(params map[string]string, paramName, fileName string, 
 }
 
 // JSON - a request to a JSON endpoint
-func (r Request) JSON(body interface{}, method string) (*http.Request, error) {
+func (r Request) JSON(body interface{}) (*http.Request, error) {
 	return reqJSON(r, body)
 }
 
