@@ -9,40 +9,40 @@ import (
 	"time"
 )
 
-func reqFormFile(r Request, params map[string]string, paramName, fileName string, fileBuffer *bytes.Buffer) (*http.Request, error) {
+func reqFormFile(r Request, params map[string]string, paramName, fileName string, fileBuffer *bytes.Buffer) (Request, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile(paramName, fileName)
 	if err != nil {
-		return nil, err
+		return r, err
 	}
 	_, err = io.Copy(part, fileBuffer)
 	if err != nil {
-		return nil, err
+		return r, err
 	}
 	for key, val := range params {
 		_ = writer.WriteField(key, val)
 	}
 	err = writer.Close()
 	if err != nil {
-		return nil, err
+		return r, err
 	}
 	req, err := http.NewRequest(r.Method, r.URI, body)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 	r.Req = req
-	return req, err
+	return r, err
 }
 
-func reqJSON(r Request, body interface{}) (*http.Request, error) {
+func reqJSON(r Request, body interface{}) (Request, error) {
 	marshalled, err := json.Marshal(body)
 	if err != nil {
-		return nil, err
+		return r, err
 	}
 	jsonBuffer := bytes.NewBuffer(marshalled)
 	req, err := http.NewRequest(r.Method, r.URI, jsonBuffer)
 	req.Header.Add("Content-Type", "application/json")
 	r.Req = req
-	return req, err
+	return r, err
 }
 
 // Request - the request object
@@ -60,12 +60,12 @@ type Response struct {
 }
 
 // FormFile - a request for a multipart upload with file buffer with optional params
-func (r Request) FormFile(params map[string]string, paramName, fileName string, fileBuffer *bytes.Buffer) (*http.Request, error) {
+func (r Request) FormFile(params map[string]string, paramName, fileName string, fileBuffer *bytes.Buffer) (Request, error) {
 	return reqFormFile(r, params, paramName, fileName, fileBuffer)
 }
 
 // JSON - a request to a JSON endpoint
-func (r Request) JSON(body interface{}) (*http.Request, error) {
+func (r Request) JSON(body interface{}) (Request, error) {
 	return reqJSON(r, body)
 }
 
