@@ -70,15 +70,15 @@ func (r Request) JSON(body interface{}) (Request, error) {
 }
 
 // Do - process the request with timeout
-func (r Request) Do() (*Response, error) {
+func (r Request) Do() (Response, error) {
 	client := &http.Client{}
 	client.Timeout = r.Timeout
 	res, err := client.Do(r.Req)
-	return &Response{res, r.URI}, err
+	return Response{res, r.URI}, err
 }
 
 // JSONDecode - decode JSON to interface
-func (r *Response) JSONDecode(decoder interface{}) (*interface{}, error) {
+func (r Response) JSONDecode(decoder interface{}) (*interface{}, error) {
 	defer r.Res.Body.Close()
 	resp := &decoder
 	err := json.NewDecoder(r.Res.Body).Decode(resp)
