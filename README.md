@@ -1,8 +1,13 @@
-# Gorex
+# GoRex
 
-## Why Gorex?
+## Why GoRex?
 
-I wanted to be able to easily create multipart uploads and JSON requests that worked with httptest.
-No existing library supported this - so Gorex was born - rwar!
+Easily create multipart uploads and JSON requests.
+
+* Multipart file uploading POST/PUT requests
+* JSON POST/PUT/GET requests
+* Supports httptest - for local router testing
 
 ...more to come
+
+

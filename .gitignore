@@ -23,9 +23,3 @@ _testmain.go
 *.exe
 *.test
 *.prof
-
-# for glide
-vendor
-
-# for go build
-gorequest
