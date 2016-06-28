@@ -2,10 +2,10 @@
 
 ## Why GoRex?
 
-Easily create multipart uploads and JSON requests.
+Easily create multipart form/file uploads and JSON requests.
 
 * Simple API
-* Multipart file uploading
+* Multipart file & form uploading
 * JSON RESTful Requests
 * Supports httptest for local router testing
 
