@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func reqFormFileDisk(r Request, params map[string]string, paramName string, filePath string) (Request, error) {
+func reqFormFileDisk(r Request, params map[string]string, paramName string, filePath string, method string) (Request, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return r, err
@@ -34,13 +34,13 @@ func reqFormFileDisk(r Request, params map[string]string, paramName string, file
 	if err != nil {
 		return r, err
 	}
-	req, err := http.NewRequest(r.Method, r.URI, body)
+	req, err := http.NewRequest(method, r.URI, body)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 	r.Req = req
 	return r, err
 }
 
-func reqFormFile(r Request, params map[string]string, paramName string, fileName string, fileBuffer *bytes.Buffer) (Request, error) {
+func reqFormFile(r Request, params map[string]string, paramName string, fileName string, fileBuffer *bytes.Buffer, method string) (Request, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile(paramName, fileName)
@@ -58,19 +58,25 @@ func reqFormFile(r Request, params map[string]string, paramName string, fileName
 	if err != nil {
 		return r, err
 	}
-	req, err := http.NewRequest(r.Method, r.URI, body)
+	req, err := http.NewRequest(method, r.URI, body)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 	r.Req = req
 	return r, err
 }
 
-func reqJSON(r Request, body interface{}) (Request, error) {
-	marshalled, err := json.Marshal(body)
-	if err != nil {
-		return r, err
+func reqJSON(r Request, body interface{}, method string) (Request, error) {
+	var req *http.Request
+	var err error
+	if body == nil {
+		req, err = http.NewRequest(method, r.URI, nil)
+	} else {
+		marshalled, err := json.Marshal(body)
+		if err != nil {
+			return r, err
+		}
+		jsonBuffer := bytes.NewBuffer(marshalled)
+		req, err = http.NewRequest(method, r.URI, jsonBuffer)
 	}
-	jsonBuffer := bytes.NewBuffer(marshalled)
-	req, err := http.NewRequest(r.Method, r.URI, jsonBuffer)
 	req.Header.Add("Content-Type", "application/json")
 	r.Req = req
 	return r, err
@@ -79,7 +85,6 @@ func reqJSON(r Request, body interface{}) (Request, error) {
 // Request - the request object
 type Request struct {
 	URI     string
-	Method  string
 	Req     *http.Request
 	Timeout time.Duration
 }
@@ -90,19 +95,39 @@ type Response struct {
 	URI string
 }
 
-// FormFileDisk - a request for a multipart upload with file path with optional params
-func (r Request) FormFileDisk(params map[string]string, paramName string, filePath string) (Request, error) {
-	return reqFormFileDisk(r, params, paramName, filePath)
+// PostFormFileDisk - a request for a multipart upload with file path with optional params
+func (r Request) PostFormFileDisk(params map[string]string, paramName string, filePath string) (Request, error) {
+	return reqFormFileDisk(r, params, paramName, filePath, "POST")
 }
 
-// FormFile - a request for a multipart upload with file buffer with optional params
-func (r Request) FormFile(params map[string]string, paramName string, fileName string, fileBuffer *bytes.Buffer) (Request, error) {
-	return reqFormFile(r, params, paramName, fileName, fileBuffer)
+// PutFormFileDisk - a request for a multipart upload with file path with optional params
+func (r Request) PutFormFileDisk(params map[string]string, paramName string, filePath string) (Request, error) {
+	return reqFormFileDisk(r, params, paramName, filePath, "PUT")
 }
 
-// JSON - a request to a JSON endpoint
-func (r Request) JSON(body interface{}) (Request, error) {
-	return reqJSON(r, body)
+// PostFormFile - a request for a multipart upload with file buffer with optional params
+func (r Request) PostFormFile(params map[string]string, paramName string, fileName string, fileBuffer *bytes.Buffer) (Request, error) {
+	return reqFormFile(r, params, paramName, fileName, fileBuffer, "POST")
+}
+
+// PutFormFile - a request for a multipart upload with file buffer with optional params
+func (r Request) PutFormFile(params map[string]string, paramName string, fileName string, fileBuffer *bytes.Buffer) (Request, error) {
+	return reqFormFile(r, params, paramName, fileName, fileBuffer, "PUT")
+}
+
+// PostJSON - POST request to a JSON endpoint
+func (r Request) PostJSON(body interface{}) (Request, error) {
+	return reqJSON(r, body, "POST")
+}
+
+// PutJSON - PUT request to a JSON endpoint
+func (r Request) PutJSON(body interface{}) (Request, error) {
+	return reqJSON(r, body, "PUT")
+}
+
+// GetJSON - PUT request to a JSON endpoint
+func (r Request) GetJSON() (Request, error) {
+	return reqJSON(r, nil, "GET")
 }
 
 // Do - process the request with timeout
