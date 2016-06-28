@@ -6,10 +6,41 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 )
 
-func reqFormFile(r Request, params map[string]string, paramName, fileName string, fileBuffer *bytes.Buffer) (Request, error) {
+func reqFormFileDisk(r Request, params map[string]string, paramName string, filePath string) (Request, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return r, err
+	}
+	defer file.Close()
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile(paramName, filepath.Base(filePath))
+	if err != nil {
+		return r, err
+	}
+	_, err = io.Copy(part, file)
+	if err != nil {
+		return r, err
+	}
+	for key, val := range params {
+		_ = writer.WriteField(key, val)
+	}
+	err = writer.Close()
+	if err != nil {
+		return r, err
+	}
+	req, err := http.NewRequest(r.Method, r.URI, body)
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+	r.Req = req
+	return r, err
+}
+
+func reqFormFile(r Request, params map[string]string, paramName string, fileName string, fileBuffer *bytes.Buffer) (Request, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile(paramName, fileName)
@@ -59,8 +90,13 @@ type Response struct {
 	URI string
 }
 
+// FormFileDisk - a request for a multipart upload with file path with optional params
+func (r Request) FormFileDisk(params map[string]string, paramName string, fileName string, filePath string) (Request, error) {
+	return reqFormFileDisk(r, params, paramName, filePath)
+}
+
 // FormFile - a request for a multipart upload with file buffer with optional params
-func (r Request) FormFile(params map[string]string, paramName, fileName string, fileBuffer *bytes.Buffer) (Request, error) {
+func (r Request) FormFile(params map[string]string, paramName string, fileName string, fileBuffer *bytes.Buffer) (Request, error) {
 	return reqFormFile(r, params, paramName, fileName, fileBuffer)
 }
 
