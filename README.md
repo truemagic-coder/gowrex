@@ -15,6 +15,7 @@ Easily create multipart uploads and JSON requests.
 ## TODO
 - tests
 - Multipart POST demo
+- GoDoc
 
 ...more to come
 
