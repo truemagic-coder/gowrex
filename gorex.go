@@ -91,7 +91,7 @@ type Response struct {
 }
 
 // FormFileDisk - a request for a multipart upload with file path with optional params
-func (r Request) FormFileDisk(params map[string]string, paramName string, fileName string, filePath string) (Request, error) {
+func (r Request) FormFileDisk(params map[string]string, paramName string, filePath string) (Request, error) {
 	return reqFormFileDisk(r, params, paramName, filePath)
 }
 
