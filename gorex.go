@@ -11,6 +11,20 @@ import (
 	"time"
 )
 
+// create body writer POST
+func reqForm(r Request, params map[string]string, method string) (Request, error) {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	for key, val := range params {
+		_ = writer.WriteField(key, val)
+	}
+	defer writer.Close()
+	req, err := http.NewRequest(method, r.URI, body)
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+	r.Req = req
+	return r, err
+}
+
 func reqFormFileDisk(r Request, params map[string]string, paramName string, filePath string, method string) (Request, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -95,22 +109,32 @@ type Response struct {
 	URI string
 }
 
-// PostFormFileDisk - a request for a multipart upload with file path with optional params
+// PostForm - POST request for a multipart form data
+func (r Request) PostForm(params map[string]string) (Request, error) {
+	return reqForm(r, params, "POST")
+}
+
+// PutForm - PUT request for a multipart form data
+func (r Request) PutForm(params map[string]string) (Request, error) {
+	return reqForm(r, params, "PUT")
+}
+
+// PostFormFileDisk - POST request for a multipart upload with file path with optional params
 func (r Request) PostFormFileDisk(params map[string]string, paramName string, filePath string) (Request, error) {
 	return reqFormFileDisk(r, params, paramName, filePath, "POST")
 }
 
-// PutFormFileDisk - a request for a multipart upload with file path with optional params
+// PutFormFileDisk - PUT request for a multipart upload with file path with optional params
 func (r Request) PutFormFileDisk(params map[string]string, paramName string, filePath string) (Request, error) {
 	return reqFormFileDisk(r, params, paramName, filePath, "PUT")
 }
 
-// PostFormFile - a request for a multipart upload with file buffer with optional params
+// PostFormFile - POST request for a multipart upload with file buffer with optional params
 func (r Request) PostFormFile(params map[string]string, paramName string, fileName string, fileBuffer *bytes.Buffer) (Request, error) {
 	return reqFormFile(r, params, paramName, fileName, fileBuffer, "POST")
 }
 
-// PutFormFile - a request for a multipart upload with file buffer with optional params
+// PutFormFile - PUT request for a multipart upload with file buffer with optional params
 func (r Request) PutFormFile(params map[string]string, paramName string, fileName string, fileBuffer *bytes.Buffer) (Request, error) {
 	return reqFormFile(r, params, paramName, fileName, fileBuffer, "PUT")
 }
@@ -125,7 +149,7 @@ func (r Request) PutJSON(body interface{}) (Request, error) {
 	return reqJSON(r, body, "PUT")
 }
 
-// GetJSON - PUT request to a JSON endpoint
+// GetJSON - GET request to a JSON endpoint
 func (r Request) GetJSON() (Request, error) {
 	return reqJSON(r, nil, "GET")
 }
