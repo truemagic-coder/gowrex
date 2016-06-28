@@ -4,9 +4,17 @@
 
 Easily create multipart uploads and JSON requests.
 
-* Multipart file uploading POST/PUT requests
-* JSON POST/PUT/GET requests
-* Supports httptest - for local router testing
+* Simple API
+* Multipart file uploading
+* JSON RESTful Requests
+* Supports httptest for local router testing
+
+## Demos
+* [JSON POST](https://github.com/bevanhunt/gorex-json-demo)
+
+## TODO
+- tests
+- Multipart POST demo
 
 ...more to come
 
