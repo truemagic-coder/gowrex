@@ -77,8 +77,8 @@ func (r Request) Do() (Response, error) {
 	return Response{res, r.URI}, err
 }
 
-// JSONDecode - decode JSON to interface
-func (e Response) JSONDecode(decoder interface{}) (*interface{}, error) {
+// JSON - decode JSON to interface
+func (e Response) JSON(decoder interface{}) (*interface{}, error) {
 	defer e.Res.Body.Close()
 	resp := &decoder
 	err := json.NewDecoder(e.Res.Body).Decode(resp)
