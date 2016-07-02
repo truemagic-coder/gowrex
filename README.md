@@ -8,6 +8,7 @@ Easily create multipart form/file uploads and JSON requests.
 * Multipart file & form uploading
 * JSON RESTful Requests
 * Supports httptest for local router testing
+* Add Headers
 
 ## Demos
 * [JSON POST](https://github.com/bevanhunt/gorex-json-demo)

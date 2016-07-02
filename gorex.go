@@ -162,6 +162,12 @@ func (r Request) Do() (Response, error) {
 	return Response{res, r.URI}, err
 }
 
+// AddHeader - add a header to the request
+func (r Request) AddHeader(key string, value string) Request {
+	r.Req.Header.Add(key, value)
+	return r
+}
+
 // JSON - decode JSON to interface
 func (e Response) JSON(decoder interface{}) (*interface{}, error) {
 	defer e.Res.Body.Close()
