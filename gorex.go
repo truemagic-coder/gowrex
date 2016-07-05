@@ -96,6 +96,12 @@ func reqJSON(r Request, body interface{}, method string) (Request, error) {
 	return r, err
 }
 
+func get(r Request) (Request, error) {
+	req, err := http.NewRequest("GET", r.URI, nil)
+	r.Req = req
+	return r, err
+}
+
 // Request - the request object
 type Request struct {
 	URI     string
@@ -152,6 +158,11 @@ func (r Request) PutJSON(body interface{}) (Request, error) {
 // GetJSON - GET request to a JSON endpoint
 func (r Request) GetJSON() (Request, error) {
 	return reqJSON(r, nil, "GET")
+}
+
+// Get - GET request to any endpoint
+func (r Request) Get() (Request, error) {
+	return get(r)
 }
 
 // Do - process the request with timeout
