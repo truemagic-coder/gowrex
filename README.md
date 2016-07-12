@@ -1,4 +1,4 @@
-# Gowrex
+# Gowrex - Golang Request Library
 
 ## Why Gowrex?
 
