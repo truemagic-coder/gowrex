@@ -1,10 +1,10 @@
-# GoRex
+# Gowrex
 
-## Why GoRex?
+## Why Gowrex?
 
 Easily create multipart form/file uploads and JSON requests.
 
-* Simple API
+* Simple and Go idomatic API
 * Multipart file & form uploading
 * JSON RESTful Requests
 * Supports httptest for local router testing
