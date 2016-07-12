@@ -11,7 +11,7 @@ Easily create multipart form/file uploads and JSON requests.
 * Add Headers
 
 ## Demos
-* [JSON POST](https://github.com/bevanhunt/gorex-json-demo)
+* [JSON POST](https://github.com/bevanhunt/gowrex-json-demo)
 
 ## TODO
 - tests
