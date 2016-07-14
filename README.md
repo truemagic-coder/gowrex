@@ -59,7 +59,7 @@ func main() {
 	resp := &JSONReceive{}
 	res.JSON(resp)
 	// should print - this is a fancy book
-	log.Println(resp.Body)
+	fmt.Println(resp.Body)
 }
 ```
 - [full source for JSON POST example](https://github.com/bevanhunt/gowrex-json-demo)
