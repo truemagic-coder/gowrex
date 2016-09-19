@@ -1,4 +1,4 @@
-# Gowrex - Golang HTTP Request Library
+# Gowrex - Golang Multipart File Upload Library
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/bevanhunt/gowrex)](https://goreportcard.com/report/github.com/bevanhunt/gowrex)
 [![GoDoc](https://godoc.org/github.com/bevanhunt/gowrex?status.svg)](https://godoc.org/github.com/bevanhunt/gowrex) 
