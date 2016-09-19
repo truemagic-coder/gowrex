@@ -7,7 +7,7 @@
 
 Easily create multipart form/file uploads and JSON requests.
 
-Currently this is the only public Golang library that supports multiform file uploads out of the box.
+Currently this is the only public Go library that supports multiform file uploads out of the box.
 
 * Simple, stable, and idomatic Go API
 * Multipart file & form uploading
