@@ -21,6 +21,11 @@ func reqForm(r Request, params map[string]string, method string) (Request, error
 	defer writer.Close()
 	req, err := http.NewRequest(method, r.URI, body)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
+	if r.Headers != nil {
+		for _, header := range r.Headers {
+			req.Header.Add(header.Key, header.Value)
+		}
+	}
 	r.Req = req
 	return r, err
 }
@@ -50,6 +55,11 @@ func reqFormFileDisk(r Request, params map[string]string, paramName string, file
 	}
 	req, err := http.NewRequest(method, r.URI, body)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
+	if r.Headers != nil {
+		for _, header := range r.Headers {
+			req.Header.Add(header.Key, header.Value)
+		}
+	}
 	r.Req = req
 	return r, err
 }
@@ -74,6 +84,11 @@ func reqFormFile(r Request, params map[string]string, paramName string, fileName
 	}
 	req, err := http.NewRequest(method, r.URI, body)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
+	if r.Headers != nil {
+		for _, header := range r.Headers {
+			req.Header.Add(header.Key, header.Value)
+		}
+	}
 	r.Req = req
 	return r, err
 }
@@ -92,6 +107,11 @@ func reqJSON(r Request, body interface{}, method string) (Request, error) {
 		req, err = http.NewRequest(method, r.URI, jsonBuffer)
 	}
 	req.Header.Add("Content-Type", "application/json")
+	if r.Headers != nil {
+		for _, header := range r.Headers {
+			req.Header.Add(header.Key, header.Value)
+		}
+	}
 	r.Req = req
 	return r, err
 }
@@ -102,11 +122,18 @@ func get(r Request) (Request, error) {
 	return r, err
 }
 
+// Header - a header object
+type Header struct {
+	Key   string
+	Value string
+}
+
 // Request - the request object
 type Request struct {
 	URI     string
 	Req     *http.Request
 	Timeout time.Duration
+	Headers []Header
 }
 
 // Response - the response object
@@ -175,7 +202,7 @@ func (r Request) Do() (Response, error) {
 
 // AddHeader - add a header on the request
 func (r Request) AddHeader(key string, value string) Request {
-	r.Req.Header.Set(key, value)
+	r.Headers = append(r.Headers, Header{Key: key, Value: value})
 	return r
 }
 
