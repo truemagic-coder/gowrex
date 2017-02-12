@@ -173,9 +173,9 @@ func (r Request) Do() (Response, error) {
 	return Response{res, r.URI}, err
 }
 
-// AddHeader - add a header to the request
+// AddHeader - add a header on the request
 func (r Request) AddHeader(key string, value string) Request {
-	r.Req.Header.Add(key, value)
+	r.Req.Header.Set(key, value)
 	return r
 }
 
