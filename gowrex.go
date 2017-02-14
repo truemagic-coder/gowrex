@@ -26,6 +26,9 @@ func reqForm(r Request, params map[string]string, method string) (Request, error
 			req.Header.Add(header.Key, header.Value)
 		}
 	}
+	if r.BasicAuth.Username != "" {
+		r.Req.SetBasicAuth(r.BasicAuth.Username, r.BasicAuth.Password)
+	}
 	r.Req = req
 	return r, err
 }
@@ -60,6 +63,9 @@ func reqFormFileDisk(r Request, params map[string]string, paramName string, file
 			req.Header.Add(header.Key, header.Value)
 		}
 	}
+	if r.BasicAuth.Username != "" {
+		r.Req.SetBasicAuth(r.BasicAuth.Username, r.BasicAuth.Password)
+	}
 	r.Req = req
 	return r, err
 }
@@ -89,6 +95,9 @@ func reqFormFile(r Request, params map[string]string, paramName string, fileName
 			req.Header.Add(header.Key, header.Value)
 		}
 	}
+	if r.BasicAuth.Username != "" {
+		r.Req.SetBasicAuth(r.BasicAuth.Username, r.BasicAuth.Password)
+	}
 	r.Req = req
 	return r, err
 }
@@ -112,6 +121,9 @@ func reqJSON(r Request, body interface{}, method string) (Request, error) {
 			req.Header.Add(header.Key, header.Value)
 		}
 	}
+	if r.BasicAuth.Username != "" {
+		r.Req.SetBasicAuth(r.BasicAuth.Username, r.BasicAuth.Password)
+	}
 	r.Req = req
 	return r, err
 }
@@ -128,12 +140,19 @@ type Header struct {
 	Value string
 }
 
+// BasicAuth - a basic auth object
+type BasicAuth struct {
+	Username string
+	Password string
+}
+
 // Request - the request object
 type Request struct {
-	URI     string
-	Req     *http.Request
-	Timeout time.Duration
-	Headers []Header
+	URI       string
+	Req       *http.Request
+	Timeout   time.Duration
+	Headers   []Header
+	BasicAuth BasicAuth
 }
 
 // Response - the response object
@@ -203,6 +222,13 @@ func (r Request) Do() (Response, error) {
 // AddHeader - add a header on the request
 func (r Request) AddHeader(key string, value string) Request {
 	r.Headers = append(r.Headers, Header{Key: key, Value: value})
+	return r
+}
+
+// AddBasicAuth - add basic auth on the request
+func (r Request) AddBasicAuth(username string, password string) Request {
+	r.BasicAuth.Password = password
+	r.BasicAuth.Username = username
 	return r
 }
 
