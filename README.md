@@ -9,12 +9,14 @@ Easily create multipart form/file uploads and JSON requests.
 
 Currently this is the only public Go library that supports multiform file uploads out of the box.
 
+Features:
 * Simple, stable, and idomatic Go API
 * Multipart file & form uploading
 * JSON RESTful Requests
 * Supports httptest for local router testing
 * Add Custom Headers
 * Connection Timeout
+* Basic Auth
 
 ## Install
 ``` bash
@@ -73,5 +75,5 @@ func main() {
 
 ## TODO
 - tests
-- basic auth
+- cookies
 - more examples
