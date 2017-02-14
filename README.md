@@ -73,4 +73,5 @@ func main() {
 
 ## TODO
 - tests
+- basic auth
 - more examples
