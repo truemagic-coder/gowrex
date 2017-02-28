@@ -74,6 +74,8 @@ func main() {
 - [GoReq](https://github.com/franela/goreq)
 
 ## TODO
-- tests
+- self-hosted JSON tests
+- multipart tests
+- basic auth tests
 - cookies
 - more examples
