@@ -2,6 +2,8 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/bevanhunt/gowrex)](https://goreportcard.com/report/github.com/bevanhunt/gowrex)
 [![GoDoc](https://godoc.org/github.com/bevanhunt/gowrex?status.svg)](https://godoc.org/github.com/bevanhunt/gowrex) 
+[![Build Status](https://img.shields.io/travis/bevanhunt/gowrex/master.svg)](https://travis-ci.org/bevanhunt/gowrex)
+[![CodeCov](https://img.shields.io/codecov/c/github/bevanhunt/gowrex/master.svg)](https://codecov.io/gh/bevanhunt/gowrex/branch/master)
 
 ## Why Gowrex?
 
@@ -74,6 +76,8 @@ func main() {
 - [GoReq](https://github.com/franela/goreq)
 
 ## TODO
-- tests
+- self-hosted JSON tests
+- multipart tests
+- basic auth tests
 - cookies
 - more examples
